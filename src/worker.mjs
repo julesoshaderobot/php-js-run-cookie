@@ -146,7 +146,9 @@ async function doproxy(req) {
     }
 
     let result = JSON.stringify({
-      "__test": acookie
+      'Content-Type': 'application/json',
+      'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36',
+      'cookie': "__test=" + acookie
     })
     
     return new Response(result, fixCors({ status: 200 }));
