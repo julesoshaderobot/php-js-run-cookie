@@ -145,7 +145,7 @@ async function doproxy(req) {
       acookie = cache.get(cacheKey)["value"];
     }
 
-    result = JSON.stringify({
+    let result = JSON.stringify({
       "__test": acookie
     })
     
