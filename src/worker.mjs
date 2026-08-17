@@ -144,10 +144,39 @@ async function doproxy(req) {
     }else{
       acookie = cache.get(cacheKey)["value"];
     }
+      
 
-    result = JSON.stringify({
-      "__test": acookie
-    })
+    const url = new URL(req.url);
+    const parts = url.pathname.split("/").filter(Boolean);
+    console.log(req)
+
+    console.log(params)
+
+    // params = encodeURIComponent(params)
+    
+    let resp3 = await fetch(`${burl}/sqlp.php?i=3`, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36',
+        'cookie': "__test=" + acookie
+      },
+      body: JSON.stringify(body)
+    });
+    let raw_result = await resp3.text();
+
+    console.log(raw_result)
+
+    let result = raw_result;
+
+    try{
+      JSON.parse(result)
+    }catch(e){
+      return new Response(JSON.stringify({
+        "status": "fail",
+        "data": raw_result
+      }), { status: 200 });
+    }
     
     return new Response(result, fixCors({ status: 200 }));
   } catch (e) {
