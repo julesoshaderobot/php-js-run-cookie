@@ -92,7 +92,7 @@ async function readStream(stream) {
 
 // 在函数外部定义缓存和TTL常量
 const cache = new Map();
-const CACHE_TTL = 10* 60 * 1000; // 5分钟，单位毫秒
+const CACHE_TTL = 1 * 60 * 1000; // 5分钟，单位毫秒
 
 
 async function doproxy(req) {
