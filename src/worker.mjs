@@ -116,7 +116,7 @@ async function doproxy(req) {
       if(cache.has(cacheKey)){
         cache.delete(cacheKey)
       }
-      const isHttps = burl.protocol === 'https:';
+      const isHttps = burl.startsWith('https:');
       const lib = isHttps ? https : http;
       
       const targetUrl = `${burl}/aes.js`
