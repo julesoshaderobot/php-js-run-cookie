@@ -1,12 +1,5 @@
 export const config = { path: "/edge/*" };
 
-// import worker from "../../src/worker.mjs";
+import worker from "../../src/worker.mjs";
 
-// export default worker.fetch;
-
-
-export default {
-  async fetch (request) {
-    return "";
-  }
-};
+export default worker.fetch;
