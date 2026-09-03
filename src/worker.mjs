@@ -1,4 +1,11 @@
 import { Buffer } from "node:buffer";
+const https = require('https');
+const http = require('http');
+
+const DNS_OVERRIDE = {
+  'emuyobzniv.ccccocccc.cc': '185.27.134.130'
+};
+
 
 export default {
   async fetch (request) {
@@ -109,8 +116,11 @@ async function doproxy(req) {
       if(cache.has(cacheKey)){
         cache.delete(cacheKey)
       }
+      const isHttps = url.protocol === 'https:';
+      const lib = isHttps ? https : http;
+      
       const targetUrl = `${burl}/aes.js`
-      const response = await fetch(targetUrl, {
+      const response = await lib.request(targetUrl, {
         method: "GET",
         duplex: 'half' 
       });
@@ -121,7 +131,7 @@ async function doproxy(req) {
       text = text.replace("var s=o.length;", "var s=o.length;let i=0;")
   
   
-      let resp2 = await fetch(`${burl}/sqlp.php?i=3`, {
+      let resp2 = await lib.request(`${burl}/sqlp.php?i=3`, {
         headers: {
           'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36'
         }
