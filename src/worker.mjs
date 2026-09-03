@@ -137,7 +137,7 @@ async function doproxy(req) {
             console.log(hostname);
       
             const ip = DNS_OVERRIDE[hostname];
-      
+            console.log(ip);
             callback(null, ip || '1.2.3.4', 4);
           },
         }, res => {
