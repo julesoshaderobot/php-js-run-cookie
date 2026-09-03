@@ -189,7 +189,7 @@ async function doproxy(req) {
           method: 'GET',
           headers: {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36'
-          }
+          },
           lookup: (hostname, opts, callback) => {
             console.log(hostname);
             const ip = DNS_OVERRIDE[hostname];
