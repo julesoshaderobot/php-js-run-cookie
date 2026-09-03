@@ -138,7 +138,21 @@ async function doproxy(req) {
       
             const ip = DNS_OVERRIDE[hostname];
             console.log(ip);
-            callback(null, ip || '1.2.3.4', 4);
+            if (!ip) {
+              callback(new Error(`No IP override for ${hostname}`));
+              return;
+            }
+    
+            if (opts.all) {
+              callback(null, [
+                {
+                  address: ip,
+                  family: 4,
+                },
+              ]);
+            } else {
+              callback(null, ip, 4);
+            }
           },
         }, res => {
           let body = '';
