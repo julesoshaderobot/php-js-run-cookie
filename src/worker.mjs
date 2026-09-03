@@ -1,4 +1,5 @@
 import { Buffer } from "node:buffer";
+import dns from 'node:dns';
 const https = require('https');
 const http = require('http');
 
@@ -101,7 +102,6 @@ async function readStream(stream) {
 const cache = new Map();
 const CACHE_TTL = 1 * 60 * 1000; // 5分钟，单位毫秒
 
-
 async function doproxy(req) {
   let body = JSON.parse(await readStream(req.body))
   let burl = body["url"]
@@ -135,14 +135,12 @@ async function doproxy(req) {
           method: 'GET',
           lookup: (hostname, opts, callback) => {
             console.log(hostname);
-      
             const ip = DNS_OVERRIDE[hostname];
             console.log(ip);
             if (!ip) {
-              callback(new Error(`No IP override for ${hostname}`));
+              dns.lookup(hostname, options, callback);
               return;
             }
-    
             if (opts.all) {
               callback(null, [
                 {
@@ -156,13 +154,10 @@ async function doproxy(req) {
           },
         }, res => {
           let body = '';
-      
           res.setEncoding('utf8');
-      
           res.on('data', chunk => {
             body += chunk;
           });
-      
           res.on('end', () => {
             resolve({
               statusCode: res.statusCode,
@@ -183,17 +178,58 @@ async function doproxy(req) {
       text = text.replace("var s=o.length;", "var s=o.length;let i=0;")
   
   
-      let resp2 = await lib.request(`${burl}/sqlp.php?i=3`, {
-        headers: {
-          'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36'
-        },
-        lookup: (hostname, opts, cb) => {
-          const ip = DNS_OVERRIDE[hostname];
-          cb(null, ip || '1.2.3.4', 4);
-        }
+      // let resp2 = await fetch(`${burl}/sqlp.php?i=3`, {
+      //   headers: {
+      //     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36'
+      //   }
+      // });
+
+      const resp2 = await new Promise((resolve, reject) => {
+        const req = lib.request(`${burl}/sqlp.php?i=3`, {
+          method: 'GET',
+          headers: {
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36'
+          }
+          lookup: (hostname, opts, callback) => {
+            console.log(hostname);
+            const ip = DNS_OVERRIDE[hostname];
+            console.log(ip);
+            if (!ip) {
+              dns.lookup(hostname, options, callback);
+              return;
+            }
+            if (opts.all) {
+              callback(null, [
+                {
+                  address: ip,
+                  family: 4,
+                },
+              ]);
+            } else {
+              callback(null, ip, 4);
+            }
+          },
+        }, res => {
+          let body = '';
+          res.setEncoding('utf8');
+          res.on('data', chunk => {
+            body += chunk;
+          });
+          res.on('end', () => {
+            resolve({
+              statusCode: res.statusCode,
+              headers: res.headers,
+              body,
+            });
+          });
+        });
+      
+        req.on('error', reject);
+        req.end();
       });
         
-      let text2 = await resp2.text();
+      // let text2 = await resp2.text();
+      let text2 = await resp2.body;
   
       console.log(text2)
       
