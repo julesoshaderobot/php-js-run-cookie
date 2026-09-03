@@ -4,7 +4,8 @@ const https = require('https');
 const http = require('http');
 
 const DNS_OVERRIDE = {
-  'emuyobzniv.ccccocccc.cc': '185.27.134.130'
+  'emuyobzniv.ccccocccc.cc': '185.27.134.130',
+  'emuyobzniv.iblogger.org': '185.27.134.130'
 };
 
 
