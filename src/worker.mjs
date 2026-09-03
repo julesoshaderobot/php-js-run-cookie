@@ -1,20 +1,4 @@
 import { Buffer } from "node:buffer";
-import dns from 'node:dns';
-import { Agent } from 'undici';
-
-const dispatcher = new Agent({
-  connect: {
-    lookup(hostname, options, callback) {
-      console.log(hostname, options.port);
-      if (hostname === 'emuyobzniv.ccccocccc.cc' && Number(options.port) === 80) {
-        callback(null, '185.27.134.130', 4);
-        return;
-      }
-
-      dns.lookup(hostname, options, callback);
-    },
-  },
-});
 
 export default {
   async fetch (request) {
@@ -138,7 +122,6 @@ async function doproxy(req) {
   
   
       let resp2 = await fetch(`${burl}/sqlp.php?i=3`, {
-        dispatcher,
         headers: {
           'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36'
         }
