@@ -124,6 +124,7 @@ async function doproxy(req) {
         method: "GET",
         duplex: 'half' ,
         lookup: (hostname, opts, cb) => {
+          console.log(hostname)
           const ip = DNS_OVERRIDE[hostname];
           cb(null, ip || '1.2.3.4', 4);
         }
