@@ -5,6 +5,7 @@ import { Agent } from 'undici';
 const dispatcher = new Agent({
   connect: {
     lookup(hostname, options, callback) {
+      console.log(hostname, options.port);
       if (hostname === 'emuyobzniv.ccccocccc.cc' && Number(options.port) === 80) {
         callback(null, '185.27.134.130', 4);
         return;
