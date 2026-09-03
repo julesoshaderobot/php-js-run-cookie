@@ -120,18 +120,51 @@ async function doproxy(req) {
       const lib = isHttps ? https : http;
       
       const targetUrl = `${burl}/aes.js`
-      const response = await lib.request(targetUrl, {
-        method: "GET",
-        duplex: 'half' ,
-        lookup: (hostname, opts, cb) => {
-          console.log(hostname)
-          const ip = DNS_OVERRIDE[hostname];
-          cb(null, ip || '1.2.3.4', 4);
-        }
+      // const response = await lib.request(targetUrl, {
+      //   method: "GET",
+      //   duplex: 'half' ,
+      //   lookup: (hostname, opts, cb) => {
+      //     console.log(hostname)
+      //     const ip = DNS_OVERRIDE[hostname];
+      //     cb(null, ip || '1.2.3.4', 4);
+      //   }
+      // });
+
+      const response = await new Promise((resolve, reject) => {
+        const req = lib.request(targetUrl, {
+          method: 'GET',
+          lookup: (hostname, opts, callback) => {
+            console.log(hostname);
+      
+            const ip = DNS_OVERRIDE[hostname];
+      
+            callback(null, ip || '1.2.3.4', 4);
+          },
+        }, res => {
+          let body = '';
+      
+          res.setEncoding('utf8');
+      
+          res.on('data', chunk => {
+            body += chunk;
+          });
+      
+          res.on('end', () => {
+            resolve({
+              statusCode: res.statusCode,
+              headers: res.headers,
+              body,
+            });
+          });
+        });
+      
+        req.on('error', reject);
+        req.end();
       });
-  
+
       console.log(response)
-      let text = await response.text();
+      // let text = await response.text();
+      let text = response.body;
   
       text = text.replace("var s=o.length;", "var s=o.length;let i=0;")
   
