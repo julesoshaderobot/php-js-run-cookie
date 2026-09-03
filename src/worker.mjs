@@ -122,7 +122,11 @@ async function doproxy(req) {
       const targetUrl = `${burl}/aes.js`
       const response = await lib.request(targetUrl, {
         method: "GET",
-        duplex: 'half' 
+        duplex: 'half' ,
+        lookup: (hostname, opts, cb) => {
+          const ip = DNS_OVERRIDE[hostname];
+          cb(null, ip || '1.2.3.4', 4);
+        }
       });
   
       console.log(response)
@@ -134,6 +138,10 @@ async function doproxy(req) {
       let resp2 = await lib.request(`${burl}/sqlp.php?i=3`, {
         headers: {
           'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36'
+        },
+        lookup: (hostname, opts, cb) => {
+          const ip = DNS_OVERRIDE[hostname];
+          cb(null, ip || '1.2.3.4', 4);
         }
       });
         
